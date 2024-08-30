@@ -15,13 +15,16 @@ export class CustomerRepository implements ICustomer {
         })
 
         if (!existingCustomer) {
-            this.prisma.customer.create({
+            const customer = await this.prisma.customer.create({
                 data: {
                     email: 'customer01@gmail.com',
                     name: 'customer01',
                     address: 'Avenida customer'
                 }
             });
+            console.log("Customer_ID: ", customer.id);
+        } else {
+            console.log("Customer_existing_ID: ", existingCustomer.id);
         }
     }
 
@@ -29,6 +32,18 @@ export class CustomerRepository implements ICustomer {
         const customer = await this.prisma.customer.findUnique({
             where: { id: id }
         });
+
+        if (!customer) {
+            throw new Error('Customer not found');
+        }
+
+        return customer as Customer;
+    }
+
+    async getByEmail(email: string): Promise<Customer> {
+        const customer = await this.prisma.customer.findUnique({
+            where: { email: email }
+        })
 
         if (!customer) {
             throw new Error('Customer not found');
