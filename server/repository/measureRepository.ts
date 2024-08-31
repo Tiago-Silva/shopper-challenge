@@ -14,14 +14,25 @@ export class MeasureRepository implements IMeasure {
 
     async update(measure: Measure): Promise<Measure> {
         return this.prisma.measure.update({
-            where: { id: measure.id },
-            data: measure
+            where: {
+                measure_uuid: measure.measure_uuid
+            },
+            data: {
+                customer_code: measure.customer_code,
+                measure_datetime: measure.measure_datetime,
+                measure_type: measure.measure_type,
+                measure_value: measure.measure_value,
+                has_confirmed: measure.has_confirmed,
+                image_url: measure.image_url,
+                createdAt: measure.createdAt,
+                updatedAt: measure.updatedAt
+            }
         });
     }
 
     async getById(id: string): Promise<Measure> {
         const measure = await this.prisma.measure.findUnique(({
-            where: { id: id }
+            where: { measure_uuid: id }
         }));
 
         if (!measure) {
@@ -60,5 +71,14 @@ export class MeasureRepository implements IMeasure {
         }
 
         return measure;
+    }
+
+    async getByIdAndType(customerId: string, measureType: string): Promise<Measure[]> {
+        return this.prisma.measure.findMany({
+            where: {
+                customer_code: customerId,
+                measure_type: measureType,
+            }
+        });
     }
 }
