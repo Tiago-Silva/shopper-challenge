@@ -1,4 +1,4 @@
-# Api rest
+# Api rest em nodejs
 Api rest em node.js, typescript, mongodb em docker e prisma ORM;
 
 <h1 align="center">
