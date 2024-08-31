@@ -22,15 +22,15 @@ export class CustomerRepository implements ICustomer {
                     address: 'Avenida customer'
                 }
             });
-            console.log("Customer_ID: ", customer.id);
+            console.log("Customer_ID: ", customer.customer_code);
         } else {
-            console.log("Customer_existing_ID: ", existingCustomer.id);
+            console.log("Customer_existing_ID: ", existingCustomer.customer_code);
         }
     }
 
     async getById(id: string): Promise<Customer> {
         const customer = await this.prisma.customer.findUnique({
-            where: { id: id }
+            where: { customer_code: id }
         });
 
         if (!customer) {
@@ -58,7 +58,7 @@ export class CustomerRepository implements ICustomer {
 
     async update(customer: Customer): Promise<Customer> {
         return this.prisma.customer.update({
-            where: { id: customer.id },
+            where: { customer_code: customer.customer_code },
             data: customer
         });
     }
