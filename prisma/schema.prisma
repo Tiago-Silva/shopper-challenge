@@ -14,22 +14,22 @@ datasource db {
 }
 
 model Customer {
-  id        String   @id @default(uuid()) @map("_id")
-  email     String   @unique
-  name      String
-  address   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  customer_code String   @id @default(uuid()) @map("_id")
+  email         String   @unique
+  name          String
+  address       String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Measure {
-  id               String   @id @default(uuid()) @map("_id")
+  measure_uuid     String   @id @default(uuid()) @map("_id")
   customer_code    String
   measure_datetime DateTime
   measure_type     String
   measure_value    Int
-  confirmed_value  Boolean
-  image            String
+  has_confirmed    Boolean  @default(false)
+  image_url        String   @default("")
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
