@@ -8,7 +8,7 @@ Api rest em node.js, typescript, mongodb em docker e prisma ORM;
 
 ## 🚀 Motivaçao / objetivo
 
-A motivação foi um convite para participar desse desafio técnico proposto pela [SHOPPER.COM]([https://github.com](https://landing.shopper.com.br/)).
+A motivação foi um convite para participar desse desafio técnico proposto pela [SHOPPER.COM](https://landing.shopper.com.br/).
 
 ## 💻 Requisitos
 
