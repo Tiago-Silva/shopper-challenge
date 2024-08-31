@@ -8,7 +8,7 @@ export interface CustomerRequest {
 }
 
 export interface Customer {
-    id: string;
+    customer_code: string;
     email: string;
     name: string;
     address: string;
@@ -21,20 +21,20 @@ export interface MeasureRequestDTO {
     measure_datetime: Date;
     measure_type: string;
     measure_value: number;
-    confirmed_value: boolean;
-    image: string;
+    has_confirmed: boolean;
+    image_url: string;
     createdAt?: Date;
     updatedAt?: Date;
 }
 
 export interface Measure {
-    id: string;
+    measure_uuid: string;
     customer_code: string;
     measure_datetime: Date;
     measure_type: string;
     measure_value: number;
-    confirmed_value: boolean;
-    image: string;
+    has_confirmed: boolean;
+    image_url: string;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -52,6 +52,16 @@ export interface IRequestDTO{
     measure_type: 'WATER' | 'GAS';
 }
 
+export interface IPathRequestDTO{
+    measure_uuid: string;
+    confirmed_value: number;
+}
+
+export interface IMeasureListDTO{
+    customer_code: string;
+    measures: Measure[];
+}
+
 export interface ICustomer {
     createInitial(): Promise<void>;
     save(newCustomer: CustomerRequest): Promise<Customer>;
@@ -66,4 +76,5 @@ export interface IMeasure {
     getById(id: string): Promise<Measure>;
     getByCustomerId(customerId: string): Promise<Measure[]>;
     getByData(customerId: string, measureDatetime: string): Promise<Measure>;
+    getByIdAndType(customerId: string, measureType: string): Promise<Measure[]>;
 }
