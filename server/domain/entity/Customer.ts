@@ -1,10 +1,10 @@
 export type CustomerProps = {
-    customer_code: string;
+    customer_code?: string;
     email: string;
     name: string;
     address: string;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export class Customer {
@@ -21,7 +21,7 @@ export class Customer {
     }
 
     public get customer_code(): string {
-        return this.props.customer_code;
+        return this.props.customer_code || '';
     }
 
     public get email(): string {
@@ -37,10 +37,10 @@ export class Customer {
     }
 
     public get createdAt(): Date {
-        return this.props.createdAt;
+        return this.props.createdAt || new Date();
     }
 
     public get updatedAt(): Date {
-        return this.props.updatedAt;
+        return this.props.updatedAt || new Date();
     }
 }
