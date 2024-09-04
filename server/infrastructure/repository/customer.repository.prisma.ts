@@ -1,10 +1,9 @@
-import {Customer, CustomerRequest, ICustomer} from "../interface/interface";
 import { PrismaClient } from '@prisma/client'
+import {CustomerGateway} from "../../application/gateway/CustomerGateway";
+import {Customer} from "../../domain/entity/Customer";
 
-export class CustomerRepository implements ICustomer {
-    private prisma: PrismaClient;
-
-    constructor(prisma: PrismaClient) {
+export class CustomerRepositoryPrisma implements CustomerGateway {
+    constructor(private readonly prisma: PrismaClient) {
         this.prisma = prisma;
     }
 
@@ -12,7 +11,7 @@ export class CustomerRepository implements ICustomer {
 
         const existingCustomer = await this.prisma.customer.findUnique({
             where: { email: 'customer01@gmail.com'}
-        })
+        });
 
         if (!existingCustomer) {
             const customer = await this.prisma.customer.create({
@@ -52,14 +51,21 @@ export class CustomerRepository implements ICustomer {
         return customer as Customer;
     }
 
-    async save(newCustomer: CustomerRequest): Promise<Customer> {
-        return this.prisma.customer.create({data: newCustomer});
+    async save(newCustomer: Customer): Promise<Customer> {
+         this.prisma.customer.create({data: newCustomer});
+         return newCustomer;
     }
 
     async update(customer: Customer): Promise<Customer> {
-        return this.prisma.customer.update({
+        const update = this.prisma.customer.update({
             where: { customer_code: customer.customer_code },
             data: customer
         });
+
+        return Customer.createWithPrisma(update);
+    }
+
+    delete(customer: Customer): Promise<void> {
+        throw new Error('Method not implemented.');
     }
 }
