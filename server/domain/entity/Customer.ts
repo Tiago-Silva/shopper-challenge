@@ -14,6 +14,17 @@ export class Customer {
         return new Customer(props);
     }
 
+    public static createWithPrisma(prisma: any): Customer {
+        return new Customer({
+            customer_code: prisma.customer_code,
+            email: prisma.email,
+            name: prisma.name,
+            address: prisma.address,
+            createdAt: prisma.createdAt,
+            updatedAt: prisma.updatedAt
+        });
+    }
+
     private validate() {
         if (this.props.name.length <= 0) {
             throw new Error('Name is required');
