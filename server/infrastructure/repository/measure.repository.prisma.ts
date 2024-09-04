@@ -1,10 +1,9 @@
 import { PrismaClient } from '@prisma/client'
-import {IMeasure, Measure, MeasureRequestDTO} from "../interface/interface";
+import {IMeasure, Measure, MeasureRequestDTO} from "../../interface/interface";
 
 
-export class MeasureRepository implements IMeasure {
-    private prisma: PrismaClient;
-    constructor(prisma: PrismaClient) {
+export class MeasureRepositoryPrisma implements IMeasure {
+    constructor(private readonly prisma: PrismaClient) {
         this.prisma = prisma
     }
 
