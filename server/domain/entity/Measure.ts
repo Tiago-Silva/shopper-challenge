@@ -1,10 +1,13 @@
+import {MeasureRequestDTO} from "../../infrastructure/DTO/MeasureRequestDTO";
+import { Measure as PrismaMeasure } from '@prisma/client';
+
 export type MeasureProps = {
     measure_uuid?: string;
     customer_code: string;
     measure_datetime: Date;
     measure_type: string;
     measure_value: number;
-    has_confirmed: Boolean;
+    has_confirmed?: Boolean;
     image_url?: string;
     createdAt?: Date;
     updatedAt?: Date;
@@ -18,6 +21,29 @@ export class Measure {
 
     public static createWithProps(props: MeasureProps) {
         return new Measure(props);
+    }
+
+    public static createWithRequestDTO(requestDTO: MeasureRequestDTO) {
+        return new Measure({
+            customer_code: requestDTO.customer_code,
+            measure_datetime: requestDTO.measure_datetime,
+            measure_type: requestDTO.measure_type,
+            measure_value: requestDTO.measure_value
+        });
+    }
+
+    public static fromPrismaToMeasure(data: PrismaMeasure): Measure {
+        return new Measure({
+            measure_uuid: data.measure_uuid,
+            customer_code: data.customer_code,
+            measure_datetime: data.measure_datetime,
+            measure_type: data.measure_type,
+            measure_value: data.measure_value,
+            has_confirmed: data.has_confirmed,
+            image_url: data.image_url,
+            createdAt: data.createdAt,
+            updatedAt: data.updatedAt
+        });
     }
 
     private validate() {
@@ -52,7 +78,7 @@ export class Measure {
     }
 
     public get has_confirmed(): Boolean {
-        return this.props.has_confirmed;
+        return this.props.has_confirmed || false;
     }
 
     public get image_url(): string {
