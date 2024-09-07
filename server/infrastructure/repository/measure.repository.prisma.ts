@@ -4,8 +4,13 @@ import { MeasureRequestDTO } from "../DTO/MeasureRequestDTO";
 import { Measure } from "../../domain/entity/Measure";
 
 export class MeasureRepositoryPrisma implements MeasureGateway {
+
     constructor(private readonly prisma: PrismaClient) {
         this.prisma = prisma;
+    }
+
+    public static create(prismaClient: PrismaClient) {
+        return new MeasureRepositoryPrisma(prismaClient);
     }
 
     async save(newMeasure: MeasureRequestDTO): Promise<Measure> {
