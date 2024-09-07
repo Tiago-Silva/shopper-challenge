@@ -28,7 +28,8 @@ export class Measure {
             customer_code: requestDTO.customer_code,
             measure_datetime: requestDTO.measure_datetime,
             measure_type: requestDTO.measure_type,
-            measure_value: requestDTO.measure_value
+            measure_value: requestDTO.measure_value,
+            image_url: requestDTO.image_url
         });
     }
 
