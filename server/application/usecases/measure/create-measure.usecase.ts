@@ -14,6 +14,11 @@ export class CreateMeasureUsecase implements Usecase<Measure, Measure> {
     public async exec(inputDTO: Measure): Promise<Measure> {
         const newMeasure = Measure.createWithProps(inputDTO);
 
+        const existingMeasure = await this.measureGateway.getByData(newMeasure.customer_code,newMeasure.measure_datetime.toString());
+        if (existingMeasure) {
+            throw new Error('DOUBLE_REPORT');
+        }
+
         await this.measureGateway.save(newMeasure);
 
         return newMeasure;
