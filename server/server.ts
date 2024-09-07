@@ -1,15 +1,22 @@
-import express from 'express';
-import measureRoute from "./routes/measureRoute";
-import {CustomerRepository} from "./repository/customerRepository";
 import prisma from "./config/prismaConfig";
+import {MeasureRepositoryPrisma} from "./infrastructure/repository/measure.repository.prisma";
+import {CreateMeasureUsecase} from "./application/usecases/measure/create-measure.usecase";
+import {CreateMeasureExpressRoute} from "./infrastructure/api/express/routes/measure/create-measure.express.route";
+import {ApiExpress} from "./infrastructure/api/express/api.express";
+import {UploadImageMeasureUsecase} from "./application/usecases/measure/upload-image-measure.usecase";
 
-const app = express();
-const customerService = new CustomerRepository(prisma);
+const Server = () => {
 
-app.use(express.json());
-app.use('/',  measureRoute);
+    const aRepository = MeasureRepositoryPrisma.create(prisma);
 
-app.listen(3000, async () => {
-    await customerService.createInitial();
-    console.log('Server is running on http://localhost:3000');
-});
+    const createMeasureUserCase = CreateMeasureUsecase.create(aRepository);
+    const uploadMeasureUserCase = UploadImageMeasureUsecase.create(aRepository);
+
+    const createRoute = CreateMeasureExpressRoute.create(createMeasureUserCase,uploadMeasureUserCase);
+
+    const api = ApiExpress.create([createRoute]);
+    const port = 3000;
+    api.start(port);
+}
+
+Server();
