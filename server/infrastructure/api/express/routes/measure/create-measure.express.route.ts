@@ -16,13 +16,28 @@ export class CreateMeasureExpressRoute implements Route {
 
     getHandler(): (request: Request, response: Response) => Promise<void> {
         return async (request: Request, response: Response) => {
-            const requestDTO: MeasureRequestDTO = request.body;
+            try {
+                const requestDTO: MeasureRequestDTO = request.body;
 
-            const input: Measure = Measure.createWithRequestDTO(requestDTO);
+                const input: Measure = Measure.createWithRequestDTO(requestDTO);
 
-            const output: Measure = await this.createMeasureService.exec(input);
+                const output: Measure = await this.createMeasureService.exec(input);
 
-            response.status(201).json(output).send();
+                response.status(201).json(output).send();
+            } catch (e) {
+                const error = e as Error;
+                if (error.message === "INVALID_DATA") {
+                    response.status(400).json({
+                        error_code: "INVALID_DATA",
+                        error_description: "Invalid data"
+                    });
+                } else if (error.message === "DOUBLE_REPORT") {
+                    response.status(409).json({
+                        error_code: "DOUBLE_REPORT",
+                        error_description: "Leitura do mês já realizada"
+                    });
+                }
+            }
         }
     };
 
