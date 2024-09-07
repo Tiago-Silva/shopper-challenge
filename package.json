@@ -5,7 +5,7 @@
   "main": "server/server.ts",
   "scripts": {
     "dev": "ts-node server/server.ts",
-    "serve": "nodemon --exec ts-node server/server.ts",
+    "serve": "nodemon --exec 'node --inspect -r ts-node/register' server/server.ts",
     "build": "tsc",
     "watch": "tsc-watch --onSuccess \"node dist/server.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
