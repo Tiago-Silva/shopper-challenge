@@ -2,6 +2,16 @@ import { PrismaClient, Measure as PrismaMeasure } from '@prisma/client';
 import { MeasureGateway } from "../../application/gateway/MeasureGateway";
 import { MeasureRequestDTO } from "../DTO/MeasureRequestDTO";
 import { Measure } from "../../domain/entity/Measure";
+import path from "path";
+import fs from "fs";
+import dotenv from "dotenv";
+import {GenerateContentResult, GoogleGenerativeAI} from "@google/generative-ai";
+import {UploadInputData, UploadOutputData} from "../../application/usecases/measure/upload-image-measure.usecase";
+
+dotenv.config();
+const configuration = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const modelId = 'gemini-1.5-flash';
+const model = configuration.getGenerativeModel({ model: modelId })
 
 export class MeasureRepositoryPrisma implements MeasureGateway {
 
@@ -35,6 +45,16 @@ export class MeasureRepositoryPrisma implements MeasureGateway {
             }
         });
         return Measure.fromPrismaToMeasure(updatedMeasure);
+    }
+
+    async upload(inputData: UploadInputData): Promise<UploadOutputData> {
+        const result = await this.getGeminiAI(inputData.image);
+        const filePath = this.saveImage(inputData.image,inputData.custom_code);
+
+        return {
+            file_path: filePath,
+            measure_value: parseInt(result.response.text())
+        }
     }
 
     async getById(id: string): Promise<Measure> {
@@ -91,5 +111,32 @@ export class MeasureRepositoryPrisma implements MeasureGateway {
         });
 
         return measures.map(Measure.fromPrismaToMeasure);
+    }
+
+    private saveImage(base64Data: string, customer_code: string): string {
+
+        const buffer = Buffer.from(base64Data, 'base64');
+        const filename = `${customer_code}_${Date.now()}.png`;
+        const filePath = path.join(__dirname, '../../../assets', filename);
+
+        try {
+            fs.writeFileSync(filePath, buffer);
+            return `/assets/${filename}`;
+        } catch (e) {
+            console.log('save image error: ', e);
+            throw new Error('Error processing image');
+        }
+    }
+
+    private async getGeminiAI(base64Data: string): Promise<GenerateContentResult> {
+        const prompt = 'Extract the numerical reading from the following image, which shows a water/gas meter reading. The reading is in the form of a number, such as 12345';
+        const image = {
+            inlineData: {
+                data: base64Data,
+                mimeType: "image/png",
+            },
+        };
+
+        return await model.generateContent([prompt,image]);
     }
 }
