@@ -54,6 +54,8 @@ export class Measure {
             || !this.props.measure_value
         ) {
             throw new Error('Invalid data');
+        } else if (this.props.measure_type !== 'WATER') {
+            throw new Error('We do not perform this type of reading');
         }
     }
 
