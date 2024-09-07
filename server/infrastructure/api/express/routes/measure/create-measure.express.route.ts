@@ -4,6 +4,11 @@ import {
     CreateMeasureUsecase
 } from "../../../../../application/usecases/measure/create-measure.usecase";
 import {Measure} from "../../../../../domain/entity/Measure";
+import {UploadMeasureDTO} from "../../../../DTO/UploadMeasureDTO";
+import {
+    UploadImageMeasureUsecase,
+    UploadOutputData
+} from "../../../../../application/usecases/measure/upload-image-measure.usecase";
 import {MeasureRequestDTO} from "../../../../DTO/MeasureRequestDTO";
 
 export class CreateMeasureExpressRoute implements Route {
@@ -11,15 +16,18 @@ export class CreateMeasureExpressRoute implements Route {
     private constructor(
         private readonly path: string,
         private readonly method: HttpMethod,
-        private readonly createMeasureService: CreateMeasureUsecase
+        private readonly createMeasureService: CreateMeasureUsecase,
+        private readonly uploadMeasureService: UploadImageMeasureUsecase
     ) {};
 
     getHandler(): (request: Request, response: Response) => Promise<void> {
         return async (request: Request, response: Response) => {
             try {
-                const requestDTO: MeasureRequestDTO = request.body;
+                const requestDTO: UploadMeasureDTO = request.body;
 
-                const input: Measure = Measure.createWithRequestDTO(requestDTO);
+                const upload: UploadOutputData = await this.uploadMeasureService.exec({image: requestDTO.image, custom_code: requestDTO.customer_code});
+
+                const input: Measure = Measure.createWithRequestDTO(this.createMeasureRequestDTO(requestDTO,upload));
 
                 const output: Measure = await this.createMeasureService.exec(input);
 
@@ -49,11 +57,25 @@ export class CreateMeasureExpressRoute implements Route {
         return this.method;
     };
 
-    public static create(createMeasureService: CreateMeasureUsecase) {
+    public static create(
+        createMeasureService: CreateMeasureUsecase,
+        uploadMeasureService: UploadImageMeasureUsecase
+    ) {
         return new CreateMeasureExpressRoute(
             '/measure',
             HttpMethod.POST,
-            createMeasureService
+            createMeasureService,
+            uploadMeasureService
         )
     };
+
+    private createMeasureRequestDTO(requestDTO: UploadMeasureDTO, upload: UploadOutputData): MeasureRequestDTO {
+        return {
+            customer_code: requestDTO.customer_code,
+            measure_datetime: requestDTO.measure_datetime,
+            measure_type: requestDTO.measure_type,
+            measure_value: upload.measure_value,
+            image_url: upload.file_path
+        }
+    }
 }
