@@ -1,4 +1,4 @@
-import {MeasureRequestDTO} from "../../infrastructure/DTO/MeasureRequestDTO";
+import {MeasureInputDTO, MeasureRequestDTO} from "../../infrastructure/DTO/MeasureRequestDTO";
 import { Measure as PrismaMeasure } from '@prisma/client';
 
 export type MeasureProps = {
@@ -6,7 +6,7 @@ export type MeasureProps = {
     customer_code: string;
     measure_datetime: Date;
     measure_type: string;
-    measure_value: number;
+    measure_value?: number;
     has_confirmed?: Boolean;
     image_url?: string;
     createdAt?: Date;
@@ -33,6 +33,14 @@ export class Measure {
         });
     }
 
+    public static createWithInputDTO(requestDTO: MeasureInputDTO) {
+        return new Measure({
+            customer_code: requestDTO.customer_code,
+            measure_datetime: requestDTO.measure_datetime,
+            measure_type: requestDTO.measure_type,
+        });
+    }
+
     public static fromPrismaToMeasure(data: PrismaMeasure): Measure {
         return new Measure({
             measure_uuid: data.measure_uuid,
@@ -52,7 +60,6 @@ export class Measure {
             !this.props.customer_code
             || !this.props.measure_datetime
             || !this.props.measure_type
-            || !this.props.measure_value
         ) {
             throw new Error('Invalid data');
         } else if (this.props.measure_type !== 'WATER') {
@@ -77,7 +84,7 @@ export class Measure {
     }
 
     public get measure_value(): number {
-        return this.props.measure_value;
+        return this.props.measure_value || 0;
     }
 
     public get has_confirmed(): Boolean {
