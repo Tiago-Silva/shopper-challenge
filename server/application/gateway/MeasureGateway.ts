@@ -7,6 +7,6 @@ export interface MeasureGateway {
     upload(input: UploadInputData): Promise<UploadOutputData>;
     getById(id: string): Promise<Measure>;
     getByCustomerId(customerId: string): Promise<Measure[]>;
-    getByData(customerId: string, measureDatetime: string): Promise<Measure>;
+    getByDateAndType(customerId: string, measureDatetime: string, measureType: string): Promise<Measure>;
     getByIdAndType(customerId: string, measureType: string): Promise<Measure[]>;
 }
