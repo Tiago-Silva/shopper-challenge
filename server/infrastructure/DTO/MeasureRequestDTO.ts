@@ -6,3 +6,9 @@ export type MeasureRequestDTO = {
     measure_value: number;
     image_url: string;
 }
+
+export type MeasureInputDTO = {
+    customer_code: string;
+    measure_datetime: Date;
+    measure_type: string;
+}
