@@ -10,6 +10,9 @@ import {
     UploadOutputData
 } from "../../../../../application/usecases/measure/upload-image-measure.usecase";
 import {MeasureRequestDTO} from "../../../../DTO/MeasureRequestDTO";
+import {
+    GetMeasureBydateandtypeUsecase
+} from "../../../../../application/usecases/measure/get-measure-bydateandtype.usecase";
 
 export class CreateMeasureExpressRoute implements Route {
 
@@ -17,13 +20,20 @@ export class CreateMeasureExpressRoute implements Route {
         private readonly path: string,
         private readonly method: HttpMethod,
         private readonly createMeasureService: CreateMeasureUsecase,
-        private readonly uploadMeasureService: UploadImageMeasureUsecase
+        private readonly uploadMeasureService: UploadImageMeasureUsecase,
+        private readonly getMeasureByDateAndTypeService: GetMeasureBydateandtypeUsecase
     ) {};
 
     getHandler(): (request: Request, response: Response) => Promise<void> {
         return async (request: Request, response: Response) => {
             try {
                 const requestDTO: UploadMeasureDTO = request.body;
+
+                await this.getMeasureByDateAndTypeService.exec(Measure.createWithInputDTO({
+                    customer_code: requestDTO.customer_code,
+                    measure_datetime: requestDTO.measure_datetime,
+                    measure_type: requestDTO.measure_type
+                }));
 
                 const upload: UploadOutputData = await this.uploadMeasureService.exec({image: requestDTO.image, custom_code: requestDTO.customer_code});
 
@@ -34,7 +44,7 @@ export class CreateMeasureExpressRoute implements Route {
                 response.status(201).json(output).send();
             } catch (e) {
                 const error = e as Error;
-                if (error.message === "INVALID_DATA") {
+                if (error.message === "Invalid data") {
                     response.status(400).json({
                         error_code: "INVALID_DATA",
                         error_description: "Invalid data"
@@ -59,13 +69,15 @@ export class CreateMeasureExpressRoute implements Route {
 
     public static create(
         createMeasureService: CreateMeasureUsecase,
-        uploadMeasureService: UploadImageMeasureUsecase
+        uploadMeasureService: UploadImageMeasureUsecase,
+        getMeasureByDateAndTypeService: GetMeasureBydateandtypeUsecase
     ) {
         return new CreateMeasureExpressRoute(
             '/measure',
             HttpMethod.POST,
             createMeasureService,
-            uploadMeasureService
+            uploadMeasureService,
+            getMeasureByDateAndTypeService
         )
     };
 
