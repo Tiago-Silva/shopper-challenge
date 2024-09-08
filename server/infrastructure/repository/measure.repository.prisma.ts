@@ -77,13 +77,14 @@ export class MeasureRepositoryPrisma implements MeasureGateway {
         return measures.map(Measure.fromPrismaToMeasure);
     }
 
-    async getByData(customerId: string, measureDatetime: string): Promise<Measure> {
+    async getByDateAndType(customerId: string, measureDatetime: string, measureType: string): Promise<Measure> {
         const date = new Date(measureDatetime);
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
         const measure: PrismaMeasure | null = await this.prisma.measure.findFirst({
             where: {
                 customer_code: customerId,
+                measure_type: measureType,
                 AND: [
                     {
                         measure_datetime: {
