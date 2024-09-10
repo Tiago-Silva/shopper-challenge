@@ -11,8 +11,8 @@ import {
 } from "../../../../../application/usecases/measure/upload-image-measure.usecase";
 import {MeasureRequestDTO} from "../../../../DTO/MeasureRequestDTO";
 import {
-    GetMeasureBydateandtypeUsecase
-} from "../../../../../application/usecases/measure/get-measure-bydateandtype.usecase";
+    GetMeasureByCustomerCodeDateAndTypeUsecase
+} from "../../../../../application/usecases/measure/get-measure-by-customer-code-date-and-type.usecase";
 
 export class CreateMeasureExpressRoute implements Route {
 
@@ -21,7 +21,7 @@ export class CreateMeasureExpressRoute implements Route {
         private readonly method: HttpMethod,
         private readonly createMeasureService: CreateMeasureUsecase,
         private readonly uploadMeasureService: UploadImageMeasureUsecase,
-        private readonly getMeasureByDateAndTypeService: GetMeasureBydateandtypeUsecase
+        private readonly getMeasureByDateAndTypeService: GetMeasureByCustomerCodeDateAndTypeUsecase
     ) {};
 
     getHandler(): (request: Request, response: Response) => Promise<void> {
@@ -70,7 +70,7 @@ export class CreateMeasureExpressRoute implements Route {
     public static create(
         createMeasureService: CreateMeasureUsecase,
         uploadMeasureService: UploadImageMeasureUsecase,
-        getMeasureByDateAndTypeService: GetMeasureBydateandtypeUsecase
+        getMeasureByDateAndTypeService: GetMeasureByCustomerCodeDateAndTypeUsecase
     ) {
         return new CreateMeasureExpressRoute(
             '/measure',
