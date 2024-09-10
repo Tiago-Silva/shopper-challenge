@@ -57,7 +57,7 @@ export class MeasureRepositoryPrisma implements MeasureGateway {
         }
     }
 
-    async getById(id: string): Promise<Measure> {
+    async getByMeasureId(id: string): Promise<Measure> {
         const measure: PrismaMeasure | null = await this.prisma.measure.findUnique({
             where: { measure_uuid: id }
         });
@@ -69,21 +69,21 @@ export class MeasureRepositoryPrisma implements MeasureGateway {
         return Measure.fromPrismaToMeasure(measure);
     }
 
-    async getByCustomerId(customerId: string): Promise<Measure[]> {
+    async getByCustomerCode(customerCode: string): Promise<Measure[]> {
         const measures: PrismaMeasure[] = await this.prisma.measure.findMany({
-            where: { customer_code: customerId }
+            where: { customer_code: customerCode }
         });
 
         return measures.map(Measure.fromPrismaToMeasure);
     }
 
-    async getByDateAndType(customerId: string, measureDatetime: string, measureType: string): Promise<Measure> {
+    async getByCustomerCodeDateAndType(customerCode: string, measureDatetime: string, measureType: string): Promise<Measure> {
         const date = new Date(measureDatetime);
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
         const measure: PrismaMeasure | null = await this.prisma.measure.findFirst({
             where: {
-                customer_code: customerId,
+                customer_code: customerCode,
                 measure_type: measureType,
                 AND: [
                     {
@@ -103,10 +103,10 @@ export class MeasureRepositoryPrisma implements MeasureGateway {
         return Measure.fromPrismaToMeasure(measure);
     }
 
-    async getByIdAndType(customerId: string, measureType: string): Promise<Measure[]> {
+    async getByCustomerCodeAndType(customerCode: string, measureType: string): Promise<Measure[]> {
         const measures: PrismaMeasure[] = await this.prisma.measure.findMany({
             where: {
-                customer_code: customerId,
+                customer_code: customerCode,
                 measure_type: measureType,
             }
         });
