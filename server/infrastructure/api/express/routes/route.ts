@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 
-export type HttpMethod = 'get' | 'post';
+export type HttpMethod = 'get' | 'post' | 'patch';
 
 export const HttpMethod = {
     GET: 'get' as HttpMethod,
-    POST: 'post' as HttpMethod
+    POST: 'post' as HttpMethod,
+    PATCH: 'patch' as HttpMethod
 } as const;
 
 export interface Route {
