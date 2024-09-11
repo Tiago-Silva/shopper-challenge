@@ -13,6 +13,12 @@ import {MeasureRequestDTO} from "../../../../DTO/MeasureRequestDTO";
 import {
     GetMeasureByCustomerCodeDateAndTypeUsecase
 } from "../../../../../application/usecases/measure/get-measure-by-customer-code-date-and-type.usecase";
+import {ErrorResponse} from "../../../../../interface/interface";
+
+const errorResponses: Map<string, ErrorResponse> = new Map([
+    ["Invalid data", { statusCode: 400, error_code: "INVALID_DATA", error_description: "Invalid data" }],
+    ["DOUBLE_REPORT", { statusCode: 409, error_code: "DOUBLE_REPORT", error_description: "Leitura do mês já realizada" }]
+]);
 
 export class CreateMeasureExpressRoute implements Route {
 
@@ -44,17 +50,12 @@ export class CreateMeasureExpressRoute implements Route {
                 response.status(201).json(output).send();
             } catch (e) {
                 const error = e as Error;
-                if (error.message === "Invalid data") {
-                    response.status(400).json({
-                        error_code: "INVALID_DATA",
-                        error_description: "Invalid data"
-                    });
-                } else if (error.message === "DOUBLE_REPORT") {
-                    response.status(409).json({
-                        error_code: "DOUBLE_REPORT",
-                        error_description: "Leitura do mês já realizada"
-                    });
+                const errorResponse = errorResponses.get(error.message) || {
+                    statusCode: 500,
+                    error_code: 'INTERNAL_SERVER_ERROR',
+                    error_description: 'Ocorreu um erro interno no servidor'
                 }
+                response.status(errorResponse.statusCode).json(errorResponse);
             }
         }
     };
