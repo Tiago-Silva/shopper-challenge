@@ -11,6 +11,8 @@ import {
 import {
     GetMeasureListByCustomerCodeAndTypeExporessRoute
 } from "./infrastructure/api/express/routes/measure/get-measure-list-by-customer-code-and-type.exporess.route";
+import {UpdateMeasureUsecase} from "./application/usecases/measure/update-measure.usecase";
+import {ConfirmMeasureExpressRoute} from "./infrastructure/api/express/routes/measure/confirm-measure.express.route";
 
 const Server = () => {
 
@@ -20,11 +22,13 @@ const Server = () => {
     const uploadMeasureUserCase = UploadImageMeasureUsecase.create(aRepository);
     const getMeasureByDateAndType = GetMeasureByCustomerCodeDateAndTypeUsecase.create(aRepository);
     const getMeasureListByCustomerCodeAntType = GetMeasureListByCustomerCodeAndTypeUsecase.create(aRepository);
+    const updateMeasureUserCase = UpdateMeasureUsecase.create(aRepository);
 
     const createRoute = CreateMeasureExpressRoute.create(createMeasureUserCase,uploadMeasureUserCase,getMeasureByDateAndType);
     const getMeasureListByCustomerCodeAndTypeRoute = GetMeasureListByCustomerCodeAndTypeExporessRoute.create(getMeasureListByCustomerCodeAntType);
+    const confirmMeasureRoute = ConfirmMeasureExpressRoute.create(updateMeasureUserCase);
 
-    const api = ApiExpress.create([createRoute,getMeasureListByCustomerCodeAndTypeRoute]);
+    const api = ApiExpress.create([createRoute,getMeasureListByCustomerCodeAndTypeRoute,confirmMeasureRoute]);
     const port = 3000;
     api.start(port);
 }
