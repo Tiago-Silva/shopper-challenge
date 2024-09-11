@@ -3,7 +3,12 @@ import {HttpMethod, Route} from "../route";
 import {
     GetMeasureListByCustomerCodeAndTypeUsecase
 } from "../../../../../application/usecases/measure/get-measure-list-by-customer-code-and-type.usecase";
+import {ErrorResponse} from "../../../../../interface/interface";
 
+const errorResponses: Map<string, ErrorResponse> = new Map([
+    ["INVALID_TYPE", { statusCode: 400, error_code: "INVALID_DATA", error_description: "Tipo de medição não permitida" }],
+    ["MEASURES_NOT_FOUND", { statusCode: 404, error_code: "MEASURES_NOT_FOUND", error_description: "Nenhuma leitura encontrada" }]
+]);
 
 export class GetMeasureListByCustomerCodeAndTypeExporessRoute implements Route {
 
@@ -37,17 +42,12 @@ export class GetMeasureListByCustomerCodeAndTypeExporessRoute implements Route {
                 response.status(200).json(output).send();
             } catch (e) {
                 const error = e as Error;
-                if (error.message === "INVALID_TYPE") {
-                    response.status(400).json({
-                        error_code: "INVALID_DATA",
-                        error_description: "Tipo de medição não permitida"
-                    });
-                } else if (error.message === "MEASURES_NOT_FOUND") {
-                    response.status(404).json({
-                        error_code: "MEASURES_NOT_FOUND",
-                        error_description: "Nenhuma leitura encontrada"
-                    });
-                }
+                const errorResponse = errorResponses.get(error.message) || {
+                    statusCode: 500,
+                    error_code: 'INTERNAL_SERVER_ERROR',
+                    error_description: 'Ocorreu um erro interno no servidor'
+                };
+                response.status(errorResponse.statusCode).json(errorResponse);
             }
         }
     };
