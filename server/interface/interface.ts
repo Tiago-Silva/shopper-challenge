@@ -1,4 +1,10 @@
 
+export interface ErrorResponse {
+    statusCode: number;
+    error_code: string;
+    error_description: string;
+}
+
 export interface CustomerRequest {
     email: string;
     name: string;
