@@ -1,9 +1,7 @@
 import {Customer} from "../../domain/entity/Customer";
+import {Gateway} from "./gateway";
 
 
-export interface CustomerGateway {
-    save(newCustomer: Customer): Promise<Customer>;
-    update(customer: Customer): Promise<Customer>;
-    delete(customer: Customer): Promise<void>;
+export interface CustomerGateway extends Gateway<Customer> {
     createInitial(): Promise<void>;
 }
