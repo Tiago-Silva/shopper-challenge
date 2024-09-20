@@ -1,9 +1,8 @@
 import {Measure} from "../../domain/entity/Measure";
 import {UploadInputData, UploadOutputData} from "../usecases/measure/upload-image-measure.usecase";
+import {Gateway} from "./gateway";
 
-export interface MeasureGateway {
-    save(newMeasure: Measure): Promise<Measure>;
-    update(measure: Measure): Promise<Measure>;
+export interface MeasureGateway extends Gateway<Measure> {
     upload(input: UploadInputData): Promise<UploadOutputData>;
     getByMeasureId(id: string): Promise<Measure>;
     getByCustomerCode(customerCode: string): Promise<Measure[]>;
