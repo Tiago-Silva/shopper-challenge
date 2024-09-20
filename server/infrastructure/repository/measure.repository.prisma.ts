@@ -47,6 +47,10 @@ export class MeasureRepositoryPrisma implements MeasureGateway {
         return Measure.fromPrismaToMeasure(updatedMeasure);
     }
 
+    delete(object: Measure): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+
     async upload(inputData: UploadInputData): Promise<UploadOutputData> {
         const result = await this.getGeminiAI(inputData.image);
         const filePath = this.saveImage(inputData.image,inputData.custom_code);

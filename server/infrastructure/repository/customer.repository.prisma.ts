@@ -7,6 +7,10 @@ export class CustomerRepositoryPrisma implements CustomerGateway {
         this.prisma = prisma;
     }
 
+    public static create(prismaClient: PrismaClient) {
+        return new CustomerRepositoryPrisma(prismaClient);
+    }
+
     async createInitial(): Promise<void> {
 
         const existingCustomer = await this.prisma.customer.findUnique({
